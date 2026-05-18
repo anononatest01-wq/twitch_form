@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Viewer Page</title>
+    <style>
+        /* htmlとbodyの背景を完全に透明にし、余白をゼロに */
+        html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: transparent; overflow: hidden; font-family: sans-serif; }
+        
+        /* フォーム全体のコンテナから無駄な余白(padding)を徹底排除 */
+        .form-container { 
+            display: flex; 
+            gap: 4px; /* 入力欄とボタンの隙間を狭く */
+            background: rgba(20, 20, 25, 0.85); /* ほんのり透けるダーク背景 */
+            padding: 4px; /* 外枠との隙間を最小限に */
+            border-radius: 4px; 
+            border: 1px solid #9146FF; /* 枠線も少し細く */
+            box-sizing: border-box; 
+            width: 100%; 
+            height: auto; /* 高さを中身に合わせる */
+        }
+        
+        /* 入力欄のサイズ調整 */
+        input[type="text"] { 
+            flex-grow: 1; 
+            height: 28px; /* 32pxから28pxにスリム化 */
+            border: 1px solid #9146FF; 
+            background: #1f1f23; 
+            color: white; 
+            padding: 0 6px; 
+            border-radius: 3px; 
+            font-size: 12px; 
+            min-width: 0; 
+        }
+        input[type="text"]::placeholder { color: #adadb8; }
+        
+        /* ボタンのサイズ調整 */
+        button { 
+            background: #9146FF; 
+            color: white; 
+            border: none; 
+            height: 28px; /* 入力欄と同じ高さ */
+            padding: 0 12px; 
+            border-radius: 3px; 
+            cursor: pointer; 
+            font-size: 12px; 
+            font-weight: bold; 
+            white-space: nowrap; 
+        }
+        button:hover { background: #772ce8; }
+    </style>
+</head>
+<body>
+
+    <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
+
+    <div class="form-container">
+        <input type="text" id="commentInput" placeholder="匿名コメント入力フォーム" maxlength="50">
+        <button id="sendBtn">送信</button>
+    </div>
+
+    <script>
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbzFHscGVbz-LQojG5hy-To2nQOYyjGKgvn6BV7j6GfbWLad5UFOSFBOS2k6AQ2q48_L/exec";
+
+        document.getElementById("sendBtn").addEventListener("click", function() {
+            const input = document.getElementById("commentInput");
+            const commentText = input.value.trim();
+            if (!commentText) return;
+
+            const dummyIP = navigator.userAgent;
+
+            fetch(GAS_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "text/plain" },
+                body: JSON.stringify({ comment: commentText, ip: dummyIP })
+            });
+
+            input.value = "";
+        });
+    </script>
+</body>
+</html>
