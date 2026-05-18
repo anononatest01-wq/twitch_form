@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Twitch Anonymous Form</title>
+    <style>
+        /* Twitchの画面に馴染むようにデザインを最適化しています */
+        body { margin: 0; padding: 5px; background: transparent; font-family: sans-serif; overflow: hidden; }
+        .form-container { display: flex; gap: 5px; background: rgba(0,0,0,0.75); padding: 5px; border-radius: 5px; border: 1px solid #9146FF; }
+        input[type="text"] { flex-grow: 1; border: 1px solid #9146FF; background: #1f1f23; color: white; padding: 6px; border-radius: 3px; font-size: 12px; }
+        input[type="text"]::placeholder { color: #adadb8; }
+        button { background: #9146FF; color: white; border: none; padding: 6px 12px; border-radius: 3px; cursor: pointer; font-size: 12px; font-weight: bold; }
+        button:hover { background: #772ce8; }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <input type="text" id="commentInput" placeholder="画面から直接、完全匿名コメを入力（仮ID付き）..." maxlength="50">
+    <button onclick="sendComment()">送信</button>
+</div>
+
+<script>
+    // ★【重要】ここにSTEP 2の最後でコピーした「GASのウェブアプリURL」を貼り付けてください
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbzFHscGVbz-LQojG5hy-To2nQOYyjGKgvn6BV7j6GfbWLad5UFOSFBOS2k6AQ2q48_L/exec";
+
+    async function sendComment() {
+        const input = document.getElementById("commentInput");
+        const commentText = input.value.trim();
+        if (!commentText) return;
+
+        try {
+            // 視聴者のIPアドレスを、日替わり仮ID生成用に裏側で一瞬だけ取得
+            const ipResponse = await fetch('https://api.ipify.org?format=json');
+            const ipData = await ipResponse.json();
+            const userIP = ipData.ip;
+
+            // 中継システム（GAS）へデータを送信
+            fetch(GAS_URL, {
+                method: "POST",
+                mode: "no-cors",
+                body: JSON.stringify({ comment: commentText, ip: userIP })
+            });
+
+            input.value = ""; // 送信が成功したら入力欄を空っぽにする
+        } catch (error) {
+            alert("送信エラーが発生しました。");
+        }
+    }
+</script>
+</body>
+</html>
