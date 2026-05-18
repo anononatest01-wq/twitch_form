@@ -16,7 +16,7 @@
 <body>
 
 <div class="form-container">
-    <input type="text" id="commentInput" placeholder="画面から直接、完全匿名コメを入力（仮ID付き）..." maxlength="50">
+    <input type="text" id="commentInput" placeholder="匿名コメント入力フォーム" maxlength="50">
     <button onclick="sendComment()">送信</button>
 </div>
 
@@ -38,7 +38,7 @@
             // 中継システム（GAS）へデータを送信
             fetch(GAS_URL, {
                 method: "POST",
-                mode: "no-cors",
+                //mode: "no-cors",
                 body: JSON.stringify({ comment: commentText, ip: userIP })
             });
 
